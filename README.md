@@ -3,7 +3,7 @@
 
 
 ### 如何运行这个例子
-+ 安装MySQL，导入`resources`下的`token_demo.sql`，创建数据库表结构。
++ 安装MySQL，导入`resources`下的`token_demo.sql`，创建数据库表结构，在`application.properties`中配置数据库账号密码。
 + 安装redis。redis官方没有提供window版本，好在微软为我们提供了window下的版本：
 [window版redis下载](https://github.com/MicrosoftArchive/redis/releases/tag/win-3.2.100)
 +  运行`TokenApplication.java`类来启动项目，默认端口为`9001`,如果有端口冲突或者希望修改端口可以到配置文件`application.properties`下修改`server.port`的值即可。
