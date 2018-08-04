@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONPObject;
 import com.baomidou.mybatisplus.mapper.EntityWrapper;
 import com.example.token.annotation.AuthToken;
 import com.example.token.entity.User;
+import com.example.token.kit.ConstantKit;
 import com.example.token.kit.Md5TokenGenerator;
 import com.example.token.kit.TokenGenerator;
 import com.example.token.mapper.UserMapper;
@@ -61,11 +62,14 @@ public class UserController {
             Jedis  jedis = new Jedis("localhost", 6379);
             String token = tokenGenerator.generate(username, password);
             jedis.set(username, token);
-            jedis.expire(username, 60 * 2);
+            jedis.expire(username, ConstantKit.TOKEN_EXPIRE_TIME);
             jedis.set(token, username);
-            jedis.expire(token, 60 * 2);
+            jedis.expire(token, ConstantKit.TOKEN_EXPIRE_TIME);
             Long currentTime = System.currentTimeMillis();
             jedis.set(token + username, currentTime.toString());
+
+            //用完关闭
+            jedis.close();
 
             result.put("status", "登录成功");
             result.put("token", token);

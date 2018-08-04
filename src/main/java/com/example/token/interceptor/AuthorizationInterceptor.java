@@ -2,6 +2,7 @@ package com.example.token.interceptor;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.token.annotation.AuthToken;
+import com.example.token.kit.ConstantKit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -60,20 +61,22 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 username = jedis.get(token);
                 log.info("username is {}", username);
             }
-            if (username != null && !username.equals("")) {
+            if (username != null && !username.trim().equals("")) {
                 //log.info("token birth time is: {}",jedis.get(username+token));
                 Long tokeBirthTime = Long.valueOf(jedis.get(token + username));
                 log.info("token Birth time is: {}", tokeBirthTime);
                 Long diff = System.currentTimeMillis() - tokeBirthTime;
                 log.info("token will expire in: {}", diff);
-                if (diff > 1000 * 100) {
-                    jedis.expire(username, 60 * 2);
-                    jedis.expire(token, 60 * 2);
+                if (diff > ConstantKit.TOKEN_RESET_TIME) {
+                    jedis.expire(username, ConstantKit.TOKEN_EXPIRE_TIME);
+                    jedis.expire(token, ConstantKit.TOKEN_EXPIRE_TIME);
                     log.info("Reset expire time success!");
                     Long newBirthTime = System.currentTimeMillis();
                     jedis.set(token + username, newBirthTime.toString());
                 }
 
+                //用完关闭
+                jedis.close();
                 request.setAttribute(REQUEST_CURRENT_KEY, username);
                 return true;
 
