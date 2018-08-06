@@ -66,7 +66,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 Long tokeBirthTime = Long.valueOf(jedis.get(token + username));
                 log.info("token Birth time is: {}", tokeBirthTime);
                 Long diff = System.currentTimeMillis() - tokeBirthTime;
-                log.info("token will expire in: {}", diff);
+                log.info("token is exist : {} ms", diff);
                 if (diff > ConstantKit.TOKEN_RESET_TIME) {
                     jedis.expire(username, ConstantKit.TOKEN_EXPIRE_TIME);
                     jedis.expire(token, ConstantKit.TOKEN_EXPIRE_TIME);
